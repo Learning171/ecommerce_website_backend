@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
@@ -19,26 +19,25 @@ class ProductCategory(str, Enum):
 
 class ProductBase(BaseModel):
     name: str
-    image: str
     category: ProductCategory
     subcategory: Optional[ProductSubcategory]
     description: str
-    price: float
-    stock_quantity: int
+    price: float = Field(gt=0)
+    stock_quantity: int = Field(gt=0)
     rating: Optional[int]
     seller_id: int
 
-    @validator("price")
-    def price_must_be_positive(cls, value):
-        if value <= 0:
-            raise ValueError("Price must be positive")
-        return value
+class ImageBase(BaseModel):
+    url: str
 
-    @validator("stock_quantity")
-    def stock_quantity_must_be_non_negative(cls, value):
-        if value < 0:
-            raise ValueError("Stock quantity must be non-negative")
-        return value
+
+class ImageCreate(ImageBase):
+    pass
+
+
+class ImageResponse(ImageBase):
+    id: int
+    product_id: int
 
 
 class ProductCreate(ProductBase):
@@ -50,6 +49,7 @@ class ProductResponse(ProductBase):
     created_at: datetime
     updated_at: datetime
     is_active: bool
+    image: ImageBase
 
 
 class ProductList(BaseModel):

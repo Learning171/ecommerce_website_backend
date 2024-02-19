@@ -77,20 +77,24 @@ def check_customer_privilege(role: str = Depends(get_current_user_role)):
         )
     return role
 
+
 # Dependency to check if the user has Admin or customer privileges
 def check_admin_or_customer(role: str = Depends(get_current_user_role)):
     if role in (UserRole.admin, UserRole.customer):
         return role
 
+
 # Dependency to check if the user has Admin or Shop Owner privileges
 def check_admin_or_shop_owner(role: str = Depends(get_current_user_role)):
     if role in (UserRole.admin, UserRole.shop_owner):
         return role
-    
+
+
 # Dependency to check if the user has Customer or Shop Owner privileges
 def check_customer_or_shop_owner(role: str = Depends(get_current_user_role)):
     if role in (UserRole.customer, UserRole.shop_owner):
         return role
+
 
 # Function to verify password
 def verify_password(plain_password, hashed_password):
@@ -102,7 +106,7 @@ def get_user(db: db_dependency, email: str):
 
 
 # Function to get current user from token
-async def get_current_user(db: db_dependency, token: str = Depends(oauth2_scheme)):
+def get_current_user(db: db_dependency, token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -123,7 +127,7 @@ async def get_current_user(db: db_dependency, token: str = Depends(oauth2_scheme
 
 
 # Function to get current active user
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
+def get_current_active_user(current_user: User = Depends(get_current_user)):
     if not current_user.is_active:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -134,14 +138,14 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
 
 
 # Function to generate password reset token
-def generate_password_reset_token(email: str) -> str:
+async def generate_password_reset_token(email: str) -> str:
     expire_time = datetime.utcnow() + timedelta(minutes=30)
     to_encode = {"sub": email, "exp": expire_time}
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
 @auth_router.post("/register")
-def register_user(db: db_dependency, user: UserCreate):
+async def register_user(db: db_dependency, user: UserCreate):
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -159,7 +163,9 @@ def register_user(db: db_dependency, user: UserCreate):
 
 
 @auth_router.post("/login")
-def login_user(db: db_dependency, form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_user(
+    db: db_dependency, form_data: OAuth2PasswordRequestForm = Depends()
+):
     user = db.query(User).filter(User.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
@@ -175,12 +181,12 @@ def login_user(db: db_dependency, form_data: OAuth2PasswordRequestForm = Depends
 
 
 @auth_router.get("/get_profile", response_model=UserResponse)
-def get_user_profile(current_user: User = Depends(get_current_active_user)):
-    return current_user.exclude('password')
+async def get_user_profile(current_user: User = Depends(get_current_active_user)):
+    return current_user
 
 
-@auth_router.get("/get_all_user")
-def get_all_user(
+@auth_router.get("/get_all_user", response_model=List[UserResponse])
+async def get_all_user(
     db: db_dependency,
     shop_owner_id: int = None,
     current_user: User = Depends(get_current_active_user),
@@ -188,7 +194,9 @@ def get_all_user(
     if current_user.role == UserRole.admin:
         if shop_owner_id is not None:
             shop_owner = (
-                db.query(User).filter(User.id == shop_owner_id, User.role == UserRole.shop_owner).first()
+                db.query(User)
+                .filter(User.id == shop_owner_id, User.role == UserRole.shop_owner)
+                .first()
             )
             if not shop_owner:
                 raise HTTPException(
@@ -206,7 +214,7 @@ def get_all_user(
 
 
 @auth_router.put("/update_profile")
-def update_profile(
+async def update_profile(
     db: db_dependency,
     is_active: bool,
     shop_owner_id: int = None,
@@ -214,7 +222,7 @@ def update_profile(
 ):
     if current_user.role != UserRole.admin:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Admin Privilege requiredx"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Admin Privilege required"
         )
     shop_owner = (
         db.query(User)
@@ -231,7 +239,7 @@ def update_profile(
 
 
 @auth_router.put("/change-password")
-def change_user_password(
+async def change_user_password(
     db: db_dependency,
     old_password: str,
     new_password: str,
@@ -249,7 +257,7 @@ def change_user_password(
 
 
 @auth_router.post("/reset-password-mail")
-def send_password_reset_mail(db: db_dependency, email: str):
+async def send_password_reset_mail(db: db_dependency, email: str):
     user = db.query(User).filter(User.email == email).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

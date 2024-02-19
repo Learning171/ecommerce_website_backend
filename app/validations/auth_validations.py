@@ -1,24 +1,26 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel, Field, EmailStr
 from enum import Enum
-from typing import List
+
 
 class UserRole(str, Enum):
-    admin = 'admin'
-    customer = 'customer'
-    shop_owner = 'shop_owner'
+    admin = "admin"
+    customer = "customer"
+    shop_owner = "shop_owner"
+
 
 class UserBase(BaseModel):
     username: str
     email: EmailStr
-    password: str
     role: UserRole = UserRole.customer
 
-class UserCreate(UserBase):
-    pass
 
-class UserResponse(UserBase):
+class UserCreate(UserBase):
+    password: str
+
+
+class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
@@ -31,6 +33,7 @@ class UserResponse(UserBase):
 class TokenData(BaseModel):
     email: str | None = None
 
+
 class AddressBase(BaseModel):
     user_id: int
     street: str
@@ -38,14 +41,17 @@ class AddressBase(BaseModel):
     state: str
     zip_code: str
 
+
 class AddressCreate(AddressBase):
     pass
+
 
 class AddressResponse(AddressBase):
     id: int
     created_at: datetime
     updated_at: datetime
     is_active: bool
+
 
 class AddressList(BaseModel):
     items: List[AddressResponse]

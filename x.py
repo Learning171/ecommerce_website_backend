@@ -995,3 +995,13 @@ def delete_existing_product(product_id: int, db: Session = Depends(get_db)):
     if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
+#########################################################################
+def save_product_image(upload_file: UploadFile):
+    file_extension = upload_file.filename.split(".")[-1]
+    file_name = f"{uuid4()}.{file_extension}"
+    file_path = os.path.join("app/images", file_name)
+
+    with open(file_path, "wb") as file:
+        file.write(upload_file.file.read())
+
+    return file_name

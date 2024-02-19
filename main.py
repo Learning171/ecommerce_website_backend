@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from app.config.db_config import engine
 from app.models import auth_model, cart_model, order_model, product_model
 from app.routes.auth_routes import auth_router
@@ -21,9 +22,12 @@ app = FastAPI(
     # openapi_url="/api/v2/openapi.json",
 )
 
+# # Static file setup config
+app.mount("/static", StaticFiles(directory="static/"), name="static")
+
 @app.get("/", tags=["Home"])
 async def home():
-    return "Welcome to Online Grocery Store"
+    return {"message" : "Welcome to Online Grocery Store"}
 
 auth_model.Base.metadata.create_all(bind = engine)
 cart_model.Base.metadata.create_all(bind = engine)

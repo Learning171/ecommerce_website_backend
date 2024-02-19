@@ -17,7 +17,6 @@ class OrderBase(BaseModel):
     user_id: int
     address_id: int
     quantity: int
-    total_price: float
     status: OrderStatus = OrderStatus.PENDING
 
 

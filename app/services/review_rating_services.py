@@ -1,5 +1,5 @@
 from app.services.db_service import db_dependency
-from app.models.product_model import Review
+from app.models.reating_review_model import Review
 from app.validations.review_rating_validations import ReviewCreate
 
 

@@ -23,29 +23,29 @@ class Product(Base):
     category = Column(Enum(ProductCategory), index=True)
     subcategory = Column(Enum(ProductSubcategory), nullable=True)
     description = Column(String)
-    image = Column(String)
     price = Column(Float)
     stock_quantity = Column(Integer)
     rating = Column(Integer)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = Column(Boolean, default=True)
+    
     seller_id = Column(Integer, ForeignKey("users.id"))
     seller = relationship("User", back_populates="products")
     orders = relationship("Order", back_populates="product")
     cart_items = relationship("Cart", back_populates="product")
     reviews = relationship("Review", back_populates="product")
+    images = relationship("Image", back_populates="product")
 
 
-class Review(Base):
-    __tablename__ = "reviews"
+class Image(Base):
+    __tablename__ = "images"
 
     id = Column(Integer, primary_key=True, index=True)
-    content = Column(String)
-    rating = Column(Float)
+    url = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_active = Column(Boolean, default=True)
+    
     product_id = Column(Integer, ForeignKey("products.id"))
-    product = relationship("Product", back_populates="reviews")
-    user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("User", back_populates="reviews")
+    product = relationship("Product", back_populates="images")
