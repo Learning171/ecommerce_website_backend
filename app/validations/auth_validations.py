@@ -30,6 +30,10 @@ class UserResponse(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.now)
 
 
+class UserLogin(BaseModel):
+    email : EmailStr
+    password: str
+
 class TokenData(BaseModel):
     email: str | None = None
 

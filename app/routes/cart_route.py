@@ -8,11 +8,11 @@ from app.services.cart_services import (
 )
 from app.validations.cart_validations import CartCreate
 from typing import Annotated
-from app.routes.auth_routes import (
-    check_customer_privilege,
-)
+# from app.routes.auth_routes import (
+#     check_customer_privilege,
+# )
 
-cutomer_required = Annotated[str, Depends(check_customer_privilege)]
+# cutomer_required = Annotated[str, Depends(check_customer_privilege)]
 
 cart_router = APIRouter(tags=["Shopping Cart"])
 

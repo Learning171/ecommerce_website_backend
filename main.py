@@ -9,6 +9,7 @@ from app.routes.cart_route import cart_router
 from app.routes.order_route import order_router
 from app.routes.product_route import product_router
 from app.routes.review_rating_route import review_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     docs_url="/api/v1/docs",
@@ -20,6 +21,19 @@ app = FastAPI(
     # version="2.0",
     openapi_url="/api/v1/openapi.json",
     # openapi_url="/api/v2/openapi.json",
+)
+
+origins = [
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # # Static file setup config

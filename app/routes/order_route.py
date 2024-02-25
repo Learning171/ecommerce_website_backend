@@ -3,11 +3,11 @@ from app.services.db_service import db_dependency
 from app.services.order_services import create_order, get_order, get_orders
 from app.validations.order_validations import OrderCreate
 from typing import Annotated
-from app.routes.auth_routes import (
-    check_customer_privilege,
-)
+# from app.routes.auth_routes import (
+#     check_customer_privilege,
+# )
 
-cutomer_required = Annotated[str, Depends(check_customer_privilege)]
+# cutomer_required = Annotated[str, Depends(check_customer_privilege)]
 
 order_router = APIRouter(tags=["Orders"])
 

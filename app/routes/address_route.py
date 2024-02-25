@@ -3,11 +3,11 @@ from app.services.db_service import db_dependency
 from app.models.auth_model import Address
 from typing import Annotated
 from app.validations.auth_validations import AddressCreate, AddressResponse, AddressList
-from app.routes.auth_routes import (
-    check_customer_privilege,
-)
+# from app.routes.auth_routes import (
+#     check_customer_privilege,
+# )
 
-cutomer_required = Annotated[str, Depends(check_customer_privilege)]
+# cutomer_required = Annotated[str, Depends(check_customer_privilege)]
 
 address_router = APIRouter(tags=["Addresses"])
 

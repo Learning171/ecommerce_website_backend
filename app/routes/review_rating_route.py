@@ -5,19 +5,21 @@ from app.services.review_rating_services import (
     get_review_for_product,
     get_all_reviews_for_product,
 )
+from app.models.auth_model import User
+from app.routes.auth_routes import get_current_active_user
 from app.validations.review_rating_validations import ReviewCreate
 from typing import Annotated
-from app.routes.auth_routes import (
-    check_customer_privilege,
-)
+# from app.routes.auth_routes import (
+#     check_customer_privilege,
+# )
 
-cutomer_required = Annotated[str, Depends(check_customer_privilege)]
+# cutomer_required = Annotated[str, Depends(check_customer_privilege)]
 
 review_router = APIRouter(tags=["Review"])
 
 
 @review_router.post("/reviews/{product_id}")
-async def create_new_review_for_product(review_create: ReviewCreate, db: db_dependency):
+async def create_new_review_for_product(review_create: ReviewCreate, db: db_dependency, current_user: User = Depends(get_current_active_user)):
     return create_review_for_product(db, review_create)
 
 

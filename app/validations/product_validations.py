@@ -27,6 +27,11 @@ class ProductBase(BaseModel):
     rating: Optional[int]
     seller_id: int
 
+
+class ProductCreate(ProductBase):
+    pass
+
+
 class ImageBase(BaseModel):
     url: str
 
@@ -38,12 +43,7 @@ class ImageCreate(ImageBase):
 class ImageResponse(ImageBase):
     id: int
     product_id: int
-
-
-class ProductCreate(ProductBase):
-    pass
-
-
+    
 class ProductResponse(ProductBase):
     id: int
     created_at: datetime

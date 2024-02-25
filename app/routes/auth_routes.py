@@ -37,63 +37,63 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-def verify_token(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could Not Validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
-    except JWTError:
-        raise credentials_exception
+# def verify_token(token: str = Depends(oauth2_scheme)):
+#     credentials_exception = HTTPException(
+#         status_code=status.HTTP_401_UNAUTHORIZED,
+#         detail="Could Not Validate credentials",
+#         headers={"WWW-Authenticate": "Bearer"},
+#     )
+#     try:
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#         return payload
+#     except JWTError:
+#         raise credentials_exception
 
 
-def get_current_user_role(current_user: dict = Depends(verify_token)):
-    return current_user.get("role")
+# def get_current_user_role(current_user: dict = Depends(verify_token)):
+#     return current_user.get("role")
 
 
-# # Dependency to check if the user has admin privileges
-def check_admin_privilege(role: str = Depends(get_current_user_role)):
-    if role != UserRole.admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Admin privilege required"
-        )
-    return role
+# # # Dependency to check if the user has admin privileges
+# def check_admin_privilege(role: str = Depends(get_current_user_role)):
+#     if role != UserRole.admin:
+#         raise HTTPException(
+#             status_code=status.HTTP_403_FORBIDDEN, detail="Admin privilege required"
+#         )
+#     return role
 
 
-# # Dependency to check if the user has shop owner privileges
-def check_shop_owner_privilege(role: str = Depends(get_current_user_role)):
-    if role == UserRole.shop_owner:
-        return role
+# # # Dependency to check if the user has shop owner privileges
+# def check_shop_owner_privilege(role: str = Depends(get_current_user_role)):
+#     if role == UserRole.shop_owner:
+#         return role
 
 
-# Dependency to check if the user has customer privileges
-def check_customer_privilege(role: str = Depends(get_current_user_role)):
-    if role != UserRole.customer:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Customer privilege required"
-        )
-    return role
+# # Dependency to check if the user has customer privileges
+# def check_customer_privilege(role: str = Depends(get_current_user_role)):
+#     if role != UserRole.customer:
+#         raise HTTPException(
+#             status_code=status.HTTP_403_FORBIDDEN, detail="Customer privilege required"
+#         )
+#     return role
 
 
-# Dependency to check if the user has Admin or customer privileges
-def check_admin_or_customer(role: str = Depends(get_current_user_role)):
-    if role in (UserRole.admin, UserRole.customer):
-        return role
+# # Dependency to check if the user has Admin or customer privileges
+# def check_admin_or_customer(role: str = Depends(get_current_user_role)):
+#     if role in (UserRole.admin, UserRole.customer):
+#         return role
 
 
-# Dependency to check if the user has Admin or Shop Owner privileges
-def check_admin_or_shop_owner(role: str = Depends(get_current_user_role)):
-    if role in (UserRole.admin, UserRole.shop_owner):
-        return role
+# # Dependency to check if the user has Admin or Shop Owner privileges
+# def check_admin_or_shop_owner(role: str = Depends(get_current_user_role)):
+#     if role in (UserRole.admin, UserRole.shop_owner):
+#         return role
 
 
-# Dependency to check if the user has Customer or Shop Owner privileges
-def check_customer_or_shop_owner(role: str = Depends(get_current_user_role)):
-    if role in (UserRole.customer, UserRole.shop_owner):
-        return role
+# # Dependency to check if the user has Customer or Shop Owner privileges
+# def check_customer_or_shop_owner(role: str = Depends(get_current_user_role)):
+#     if role in (UserRole.customer, UserRole.shop_owner):
+#         return role
 
 
 # Function to verify password
